@@ -16,10 +16,10 @@ services:
       - postgres
     
   postgres:
-    image: postgres:latest
+    image: postgres:16
     restart: unless-stopped
     environment:
-      - POSTGRES_PASWORD=mySecretPassword
+      - POSTGRES_PASSWORD=mySecretPassword
     ports:
       - 5432
     volumes:
