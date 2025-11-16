@@ -30,7 +30,6 @@ export class CredentialService {
     }
   }
 
-  // TODO:
   async validate(input: CreateCredentialInput): Promise<boolean> {
     const { userId, key: pwd, type } = input;
     const credential = await this.credentialRepo.findOne({

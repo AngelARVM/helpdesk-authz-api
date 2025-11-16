@@ -6,7 +6,8 @@ import { UserDTO } from '../user/dtos/user.dto';
 import { SignInInput } from './dto/sign-in.input';
 import { JwtService } from '@nestjs/jwt';
 import { IUser } from '../user/types/user.interface';
-import { UserContext } from '../../common/types/user-context.interface';
+import { UserContext } from '@/common/types/user-context.interface';
+import { SingInResponseDTO } from './dto/sign-in.response';
 
 @Injectable()
 export class AuthService {
@@ -32,8 +33,7 @@ export class AuthService {
     return user;
   }
 
-  // TODO: response with {access_token}
-  async signIn(input: SignInInput): Promise<{ accessToken: string } | null> {
+  async signIn(input: SignInInput): Promise<SingInResponseDTO> {
     const { email, password } = input;
     const user = await this.userService.user({ email });
 
@@ -61,6 +61,7 @@ export class AuthService {
     return {
       userId: user.id,
       email: user.email,
+      role: user.role,
       sub: user.id,
     };
   }

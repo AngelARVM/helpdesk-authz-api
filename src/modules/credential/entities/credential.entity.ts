@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ICredential } from '../types/credential.interface';
-import { UserEntity } from '../../user/entities/user.entity';
+import { UserEntity } from '@/modules/user/entities/user.entity';
 
 @Entity('credentials')
 export class CredentialEntity implements ICredential {

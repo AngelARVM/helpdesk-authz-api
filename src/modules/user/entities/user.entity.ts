@@ -6,7 +6,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { IUser } from '../types/user.interface';
-import { CredentialEntity } from '../../credential/entities/credential.entity';
+import { CredentialEntity } from '@/modules/credential/entities/credential.entity';
+import { RolesCatalog } from '@/common/types/user-role.catalog';
 
 @Entity('users')
 export class UserEntity implements IUser {
@@ -15,6 +16,13 @@ export class UserEntity implements IUser {
 
   @Column()
   email: string;
+
+  @Column({
+    type: 'enum',
+    enum: RolesCatalog,
+    default: RolesCatalog.USER,
+  })
+  role: RolesCatalog;
 
   @OneToMany(() => CredentialEntity, (credential) => credential.user)
   credentials: CredentialEntity[];
