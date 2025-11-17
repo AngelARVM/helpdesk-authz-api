@@ -79,6 +79,7 @@ export class TicketService {
           ownerId: user.userId,
         },
         select: {
+          id: true,
           title: true,
           description: true,
           status: true,
@@ -89,6 +90,7 @@ export class TicketService {
           assignedToId: user.userId,
         },
         select: {
+          id: true,
           title: true,
           description: true,
           status: true,
@@ -98,6 +100,7 @@ export class TicketService {
       },
       [RolesCatalog.ADMIN]: {
         select: {
+          id: true,
           title: true,
           description: true,
           status: true,

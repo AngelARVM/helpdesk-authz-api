@@ -6,6 +6,7 @@ import type { UserContext } from '@/common/types/user-context.interface';
 import { Authed } from '@/common/middlewares/decorators/authed.decorator';
 import { CreateTicketInput } from './dtos/create-ticket.input';
 import { TicketDTO } from './dtos/ticket.dto';
+import { ApiOkResponse, ApiParam } from '@nestjs/swagger';
 
 @Controller('tickets')
 export class TicketController {
@@ -20,6 +21,11 @@ export class TicketController {
     return this.ticketService.create(input, user);
   }
 
+  @ApiParam({
+    name: 'id',
+    description: 'The unique identifier of the ticket to retrieve',
+    type: String,
+  })
   @Authed([RolesCatalog.USER, RolesCatalog.MODERATOR, RolesCatalog.ADMIN])
   @Get(':id')
   async ticket(
@@ -29,6 +35,10 @@ export class TicketController {
     return this.ticketService.ticket(id, user);
   }
 
+  @ApiOkResponse({
+    description:
+      'List of tickets for the current user, filtered and shaped based on role (ABAC-lite)',
+  })
   @Authed([RolesCatalog.USER, RolesCatalog.MODERATOR, RolesCatalog.ADMIN])
   @Get()
   async tickets(
