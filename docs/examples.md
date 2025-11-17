@@ -5,35 +5,35 @@ Each user has an email/password defined in the seed.
 
 USER1 – Sign in
 ```bash
-curl -X POST http://localhost:3000/auth/sign-in \
+curl -X POST http://localhost:5001/auth/sign-in \
   -H "Content-Type: application/json" \
   -d '{"email":"user1@example.com", "password":"User1234!"}'
 ```
 
 USER2 – Sign in
 ```bash
-curl -X POST http://localhost:3000/auth/sign-in \
+curl -X POST http://localhost:5001/auth/sign-in \
   -H "Content-Type: application/json" \
   -d '{"email":"user2@example.com", "password":"User1234!"}'
 ```
 
 MODERATOR1 – Sign in
 ```bash
-curl -X POST http://localhost:3000/auth/sign-in \
+curl -X POST http://localhost:5001/auth/sign-in \
   -H "Content-Type: application/json" \
   -d '{"email":"moderator1@example.com", "password":"Mod1234!"}'
 ```
 
 MODERATOR2 – Sign in
 ```bash
-curl -X POST http://localhost:3000/auth/sign-in \
+curl -X POST http://localhost:5001/auth/sign-in \
   -H "Content-Type: application/json" \
   -d '{"email":"moderator2@example.com", "password":"Mod1234!"}'
 ```
 
 ADMIN – Sign in
 ```bash
-curl -X POST http://localhost:3000/auth/sign-in \
+curl -X POST http://localhost:5001/auth/sign-in \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@example.com", "password":"Admin1234!"}'
 ```
@@ -46,7 +46,7 @@ Each request returns:
 
 ## 👤 2. /auth/me (View authenticated user)
 ```bash
-curl -X GET http://localhost:3000/auth/me \
+curl -X GET http://localhost:5001/auth/me \
   -H "Authorization: Bearer <TOKEN>"
 ```
 
@@ -56,7 +56,7 @@ Returns the user associated with the token.
 ### 3.1 Ticket listing per role
 USER1 should only see tickets T1 and T2 (own tickets)
 ```bash
-curl -X GET http://localhost:3000/tickets \
+curl -X GET http://localhost:5001/tickets \
   -H "Authorization: Bearer <USER1_TOKEN>"
 ```
 
@@ -64,7 +64,7 @@ USER1 → returns only tickets where ownerId = user1.id and omits internalNotes,
 
 MODERATOR1 should only see tickets assigned to them (T2)
 ```bash
-curl -X GET http://localhost:3000/tickets \
+curl -X GET http://localhost:5001/tickets \
   -H "Authorization: Bearer <MODERATOR1_TOKEN>"
 ```
 
@@ -72,7 +72,7 @@ MODERATOR → returns tickets where assignedToId = <mod1_id>. The selection incl
 
 ADMIN should see all tickets (T1, T2, T3, T4, T5)
 ```bash
-curl -X GET http://localhost:3000/tickets \
+curl -X GET http://localhost:5001/tickets \
   -H "Authorization: Bearer <ADMIN_TOKEN>"
 ```
 
@@ -86,7 +86,7 @@ ADMIN → sees every field, including:
 
 ### 3.2 Create ticket (USER only)
 ```bash
-curl -X POST http://localhost:3000/tickets \
+curl -X POST http://localhost:5001/tickets \
   -H "Authorization: Bearer <USER1_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -99,7 +99,7 @@ MODERATOR or ADMIN → receive 403 Forbidden (RBAC).
 
 ### 3.3 Assign ticket (ADMIN only)
 ```bash
-curl -X PATCH http://localhost:3000/tickets/<TICKET_ID>/assign \
+curl -X PATCH http://localhost:5001/tickets/<TICKET_ID>/assign \
   -H "Authorization: Bearer <ADMIN_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -109,7 +109,7 @@ curl -X PATCH http://localhost:3000/tickets/<TICKET_ID>/assign \
 
 ### 3.4 Update ticket status (ADMIN or MODERATOR)
 ```bash
-curl -X PATCH http://localhost:3000/tickets/<TICKET_ID>/status \
+curl -X PATCH http://localhost:5001/tickets/<TICKET_ID>/status \
   -H "Authorization: Bearer <ADMIN_OR_MOD_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -120,7 +120,7 @@ curl -X PATCH http://localhost:3000/tickets/<TICKET_ID>/status \
 ### 3.3 Get ticket by ID – resource-based access (ownership)
 USER1 tries to access a USER2 ticket (should fail)
 ```bash
-curl -X GET http://localhost:3000/tickets/<USER2_TICKET_ID> \
+curl -X GET http://localhost:5001/tickets/<USER2_TICKET_ID> \
   -H "Authorization: Bearer <USER1_TOKEN>"
 ```
 
@@ -140,13 +140,13 @@ MODERATOR1 only accesses tickets assigned to them
 Example: Ticket T2
 
 ```bash
-curl -X GET http://localhost:3000/tickets/<T2_ID> \
+curl -X GET http://localhost:5001/tickets/<T2_ID> \
   -H "Authorization: Bearer <MODERATOR1_TOKEN>"
 ```
 
 ADMIN can access any ticket
 ```bash
-curl -X GET http://localhost:3000/tickets/<ANY_TICKET_ID> \
+curl -X GET http://localhost:5001/tickets/<ANY_TICKET_ID> \
   -H "Authorization: Bearer <ADMIN_TOKEN>"
 ```
 
@@ -159,7 +159,7 @@ They see:
 ## 🛡 4. Routes protected by role (RBAC)
 4.1 /admin/health – ADMIN only
 ```bash
-curl -X GET http://localhost:3000/admin/health \
+curl -X GET http://localhost:5001/admin/health \
   -H "Authorization: Bearer <ADMIN_TOKEN>"
 ```
 
@@ -172,13 +172,13 @@ With another role (USER/MOD):
 ## 📚 5. Manage users (ADMIN + MODERATOR only)
 List users
 ```bash
-curl -X GET http://localhost:3000/users \
+curl -X GET http://localhost:5001/users \
   -H "Authorization: Bearer <ADMIN_TOKEN>"
 ```
 
 Get user by ID
 ```bash
-curl -X GET http://localhost:3000/users/<USER_ID> \
+curl -X GET http://localhost:5001/users/<USER_ID> \
   -H "Authorization: Bearer <MODERATOR1_TOKEN>"
 ```
 

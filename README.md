@@ -13,10 +13,48 @@ The main goals are to demonstrate:
 - A setup that is ready for unit tests using mocked repositories.
 
 ---
+## 📝 What This Project Does
+
+This is a **NestJS API** implementing a comprehensive **authentication and authorization system** using **JWT**, **RBAC**, **ownership-based access control**, and **attribute-based filtering (ABAC-lite)**. 
+
+The **Tickets module** serves as a simple CRUD example to demonstrate different authorization layers in action. The real focus of this project is showcasing a **production-ready access control architecture** that can be extended to any domain model.
+
+**Key concepts demonstrated:**
+- **Authentication** via JWT tokens
+- **Role-based endpoint protection** (RBAC)
+- **Resource ownership validation** 
+- **Dynamic field filtering** based on user attributes (ABAC-lite)
+
+Perfect as a foundation for building secure, multi-tenant applications with granular permissions.
+
+## 📖 Quick Start & Examples
+
+Get the project running in 3 steps:
+
+```bash
+# 1. First-time setup (sets permissions, copies .env, builds containers)
+make first-run
+
+# 2. Start the application
+make up
+
+# 3. Seed the database with test data
+make seed
+```
+
+The API will be available at [`http://localhost:5001`](http://localhost:5001).
+
+For detailed API examples and usage patterns, see [`docs/examples.md`](./docs/examples.md).
+
+The interactive OpenAPI documentation is available at [`http://localhost:5001/api`](http://localhost:5001/api) – use it as a playground to test all endpoints directly in your browser.
+
+---
 
 # 📘 Table of Contents
 
 - [🔐 Auth + Authorization ABAC-lite – NestJS Challenge](#-auth--authorization-abac-lite--nestjs-challenge)
+  - [📝 What This Project Does](#-what-this-project-does)
+  - [📖 Quick Start \& Examples](#-quick-start--examples)
 - [📘 Table of Contents](#-table-of-contents)
 - [✅ Key Highlights](#-key-highlights)
 - [🧱 High-Level Architecture](#-high-level-architecture)
