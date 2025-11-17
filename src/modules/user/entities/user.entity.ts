@@ -14,7 +14,8 @@ export class UserEntity implements IUser {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  // IRL apps you may want to add an @Index() here
+  @Column({ unique: true })
   email: string;
 
   @Column({

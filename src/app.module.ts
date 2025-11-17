@@ -6,6 +6,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './modules/user/user.module';
 import { CredentialModule } from './modules/credential/credential.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { AdminModule } from './modules/admin/admin.module';
+import { TicketModule } from './modules/ticket/ticket.module';
 
 @Module({
   imports: [
@@ -27,9 +29,11 @@ import { AuthModule } from './modules/auth/auth.module';
         password: configService.get('dbPassword'),
       }),
     }),
+    AdminModule,
     AuthModule,
     UserModule,
     CredentialModule,
+    TicketModule,
   ],
   controllers: [AppController],
 })
