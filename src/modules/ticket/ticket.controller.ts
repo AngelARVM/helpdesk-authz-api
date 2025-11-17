@@ -1,11 +1,13 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { TicketService } from './ticket.service';
 import { RolesCatalog } from '@/common/types/user-role.catalog';
-import { CurrentUser } from '@/common/middlewares/decorators/currnt-user.decorator';
+import { CurrentUser } from '@/common/middlewares/decorators/current-user.decorator';
 import type { UserContext } from '@/common/types/user-context.interface';
 import { Authed } from '@/common/middlewares/decorators/authed.decorator';
 import { CreateTicketInput } from './dtos/create-ticket.input';
 import { TicketDTO } from './dtos/ticket.dto';
+import { AssignTicketInput } from './dtos/assign-ticket.input';
+import { UpdateTicketStatusInput } from './dtos/update-ticket-status.input';
 import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
@@ -59,5 +61,32 @@ export class TicketController {
     @CurrentUser() user: UserContext,
   ): Promise<Partial<TicketDTO>[]> {
     return this.ticketService.tickets(user);
+  }
+
+  @ApiOkResponse({
+    description: 'Assigns a ticket to a moderator',
+    type: TicketDTO,
+  })
+  @Authed([RolesCatalog.ADMIN])
+  @Patch(':id/assign')
+  async assignTicket(
+    @Param('id') id: TicketDTO['id'],
+    @Body() input: AssignTicketInput,
+  ): Promise<TicketDTO> {
+    return this.ticketService.assignTicket(id, input.assignedToId);
+  }
+
+  @ApiOkResponse({
+    description: 'Updates the ticket status (IN_PROGRESS or CLOSED)',
+    type: TicketDTO,
+  })
+  @Authed([RolesCatalog.ADMIN, RolesCatalog.MODERATOR])
+  @Patch(':id/status')
+  async updateStatus(
+    @Param('id') id: TicketDTO['id'],
+    @Body() input: UpdateTicketStatusInput,
+    @CurrentUser() user: UserContext,
+  ): Promise<TicketDTO> {
+    return this.ticketService.updateStatus(id, input.status, user);
   }
 }

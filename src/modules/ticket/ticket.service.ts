@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { UserContext } from '@/common/types/user-context.interface';
@@ -6,6 +10,7 @@ import { TicketEntity } from './entities/ticket.entity';
 import { TicketDTO } from './dtos/ticket.dto';
 import { CreateTicketInput } from './dtos/create-ticket.input';
 import { RolesCatalog } from '../../common/types/user-role.catalog';
+import { TicketStatusCatalog } from './types/ticket-status.catalog';
 
 @Injectable()
 export class TicketService {
@@ -36,7 +41,9 @@ export class TicketService {
 
     const ticket = await this.ticketRepo.findOne(options);
 
-    if (user.role === RolesCatalog.USER && ticket.ownerId !== user.userId)
+    if (!ticket) throw new NotFoundException('Ticket not found');
+
+    if (user.role == RolesCatalog.USER && ticket.ownerId !== user.userId)
       throw new UnauthorizedException('You can only access your own tickets');
 
     return ticket;
@@ -48,6 +55,31 @@ export class TicketService {
 
   async update(id, update): Promise<TicketDTO> {
     await this.ticketRepo.update(id, update);
+    return this.ticketRepo.findOneBy({ id });
+  }
+
+  async assignTicket(id: string, assignedToId: string): Promise<TicketDTO> {
+    await this.getTicketOrThrow(id);
+    await this.ticketRepo.update(id, { assignedToId });
+    return this.ticketRepo.findOneBy({ id });
+  }
+
+  async updateStatus(
+    id: string,
+    status: TicketStatusCatalog,
+    user: UserContext,
+  ): Promise<TicketDTO> {
+    const ticket = await this.getTicketOrThrow(id);
+    if (
+      user.role === RolesCatalog.MODERATOR &&
+      ticket.assignedToId !== user.userId
+    ) {
+      throw new UnauthorizedException(
+        'You can only update the status of your assigned tickets',
+      );
+    }
+
+    await this.ticketRepo.update(id, { status });
     return this.ticketRepo.findOneBy({ id });
   }
 
@@ -115,5 +147,17 @@ export class TicketService {
       ...(isMany ? baseOptions : {}),
       ...roleOptions[user.role],
     };
+  }
+
+  private async getTicketOrThrow(id: string): Promise<TicketEntity> {
+    const ticket = await this.ticketRepo.findOne({
+      where: { id },
+    });
+
+    if (!ticket) {
+      throw new NotFoundException('Ticket not found');
+    }
+
+    return ticket;
   }
 }

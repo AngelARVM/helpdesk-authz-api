@@ -97,6 +97,26 @@ curl -X POST http://localhost:3000/tickets \
 
 MODERATOR or ADMIN → receive 403 Forbidden (RBAC).
 
+### 3.3 Assign ticket (ADMIN only)
+```bash
+curl -X PATCH http://localhost:3000/tickets/<TICKET_ID>/assign \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "assignedToId": "<MODERATOR_ID>"
+  }'
+```
+
+### 3.4 Update ticket status (ADMIN or MODERATOR)
+```bash
+curl -X PATCH http://localhost:3000/tickets/<TICKET_ID>/status \
+  -H "Authorization: Bearer <ADMIN_OR_MOD_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "IN_PROGRESS"
+  }'
+```
+
 ### 3.3 Get ticket by ID – resource-based access (ownership)
 USER1 tries to access a USER2 ticket (should fail)
 ```bash

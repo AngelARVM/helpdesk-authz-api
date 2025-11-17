@@ -26,7 +26,7 @@ The main goals are to demonstrate:
     - [Core Modules](#core-modules)
 - [🛠️ Technology Stack](#️-technology-stack)
     - [Core](#core)
-    - [Authentication & Authorization](#authentication--authorization)
+    - [Authentication \& Authorization](#authentication--authorization)
     - [Database](#database)
     - [Infrastructure](#infrastructure)
     - [Misc](#misc)
@@ -37,6 +37,7 @@ The main goals are to demonstrate:
     - [🟢 Attribute Authorization (ABAC-lite)](#-attribute-authorization-abac-lite)
     - [🟢 Infrastructure](#-infrastructure)
     - [🟢 Documentation](#-documentation)
+- [🧪 Testing](#-testing)
 
 ---
 
@@ -135,7 +136,6 @@ Standard tooling for production-grade NestJS projects:
 ### Misc
 - **Swagger / OpenAPI** for auto-documentation
 - **class-validator** and **class-transformer** for DTO validation
-- **bcrypt/scrypt** for secure credential storage
 
 # 🎯 Features
 
@@ -171,3 +171,21 @@ The `Ticket` resource changes depending on the role:
 ### 🟢 Documentation
 - Swagger available at `http://localhost:5001/api`.
 - Real-world examples in [`docs/examples.md`](./docs/examples.md).
+
+# 🧪 Testing
+
+All specs run with Jest. Unit tests mock TypeORM repositories, while e2e tests spin up the real Nest application (requires the Postgres service running—`docker compose up postgres` is enough).
+
+```bash
+# run unit tests
+npm test
+
+# watch mode for unit tests
+npm run test:watch
+
+# e2e suite 
+npm run test:e2e
+
+# coverage
+npm run test:cov
+```

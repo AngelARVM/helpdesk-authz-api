@@ -7,7 +7,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Authed } from '@/common/middlewares/decorators/authed.decorator';
-import { CurrentUser } from '@/common/middlewares/decorators/currnt-user.decorator';
+import { CurrentUser } from '@/common/middlewares/decorators/current-user.decorator';
 import type { UserContext } from '@/common/types/user-context.interface';
 import { AuthService } from './auth.service';
 import { SignUpInput } from './dto/sign-up.input';
