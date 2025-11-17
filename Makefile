@@ -13,6 +13,10 @@ up: ## run the docker image
 .PHONY: first-run
 first-run: prepare build up
 
+.PHONY: seed
+seed: 
+	@docker compose exec server npm run seed
+
 .PHONY: sh
 sh: ## open a shell in local environment
 	@docker compose exec server /bin/bash
