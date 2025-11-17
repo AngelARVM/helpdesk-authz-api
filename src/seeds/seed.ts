@@ -108,7 +108,7 @@ async function seed() {
     );
 
     // Clear table
-    await ticketRepo.deleteAll();
+    await ticketRepo.delete({});
 
     // Create 5 tickets
     // T1, T2 by user1

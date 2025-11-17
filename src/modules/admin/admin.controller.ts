@@ -7,6 +7,7 @@ import {
 } from '@nestjs/terminus';
 import { Authed } from '../../common/middlewares/decorators/authed.decorator';
 import { RolesCatalog } from '../../common/types/user-role.catalog';
+import { ApiForbiddenResponse, ApiOkResponse } from '@nestjs/swagger';
 
 @Controller('admin')
 export class AdminController {
@@ -16,6 +17,8 @@ export class AdminController {
     private readonly db: TypeOrmHealthIndicator,
   ) {}
 
+  @ApiOkResponse({ description: 'Health check response' })
+  @ApiForbiddenResponse({ description: 'Only ADMIN can access this endpoint' })
   @Authed([RolesCatalog.ADMIN])
   @Get('health')
   @HealthCheck()

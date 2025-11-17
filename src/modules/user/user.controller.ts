@@ -4,8 +4,9 @@ import { UserService } from './user.service';
 import { CreateUserInput } from './dtos/create-user.input';
 import { Authed } from '../../common/middlewares/decorators/authed.decorator';
 import { RolesCatalog } from '../../common/types/user-role.catalog';
-import { ApiParam } from '@nestjs/swagger';
+import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Users')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -15,6 +16,11 @@ export class UserController {
     return this.userService.create(input);
   }
 
+  @ApiOkResponse({
+    description: 'List all users',
+    type: UserDTO,
+    isArray: true,
+  })
   @Authed([RolesCatalog.ADMIN, RolesCatalog.MODERATOR])
   @Get()
   async users(): Promise<UserDTO[]> {
@@ -26,6 +32,7 @@ export class UserController {
     description: 'The unique identifier of the user to retrieve',
     type: String,
   })
+  @ApiOkResponse({ description: 'User found', type: UserDTO })
   @Authed([RolesCatalog.ADMIN, RolesCatalog.MODERATOR])
   @Get(':id')
   async user(@Param('id') id: string): Promise<UserDTO> {

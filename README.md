@@ -1,98 +1,173 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🔐 Auth + Authorization ABAC-lite – NestJS Challenge
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project implements an RBAC + ABAC-lite authentication and authorization system using **NestJS**, **JWT**, **PostgreSQL**, and **Docker**.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+The main goals are to demonstrate:
 
-## Description
+- JWT authentication.
+- Endpoint authorization (RBAC).
+- Resource authorization (per-user ownership).
+- Attribute-based authorization (ABAC-lite) that filters fields per role.
+- Reproducible seeds to test every flow.
+- Auto-generated documentation via **Swagger**.
+- A setup that is ready for unit tests using mocked repositories.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+# 📘 Table of Contents
 
-```bash
-$ npm install
-```
+- [🔐 Auth + Authorization ABAC-lite – NestJS Challenge](#-auth--authorization-abac-lite--nestjs-challenge)
+- [📘 Table of Contents](#-table-of-contents)
+- [✅ Key Highlights](#-key-highlights)
+- [🧱 High-Level Architecture](#-high-level-architecture)
+    - [1. RBAC (Role-Based Access Control)](#1-rbac-role-based-access-control)
+    - [2. Ownership (Resource-Based Authorization)](#2-ownership-resource-based-authorization)
+    - [3. ABAC-lite (Attribute-Based Access Control)](#3-abac-lite-attribute-based-access-control)
+    - [Core Modules](#core-modules)
+- [🛠️ Technology Stack](#️-technology-stack)
+    - [Core](#core)
+    - [Authentication & Authorization](#authentication--authorization)
+    - [Database](#database)
+    - [Infrastructure](#infrastructure)
+    - [Misc](#misc)
+- [🎯 Features](#-features)
+    - [🟢 Authentication](#-authentication)
+    - [🟢 Endpoint Authorization (RBAC)](#-endpoint-authorization-rbac)
+    - [🟢 Resource Authorization (Ownership)](#-resource-authorization-ownership)
+    - [🟢 Attribute Authorization (ABAC-lite)](#-attribute-authorization-abac-lite)
+    - [🟢 Infrastructure](#-infrastructure)
+    - [🟢 Documentation](#-documentation)
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+# ✅ Key Highlights
 
-# watch mode
-$ npm run start:dev
+- ✔ **OpenAPI documentation** via Swagger at [`http://localhost:5001/api`](http://localhost:5001/api)
+- ✔ **JWT Authentication**
+- ✔ **Role-based authorization (RBAC)** using the `@Authed()` decorator
+- ✔ **Resource ownership authorization**
+- ✔ **ABAC-lite**: returned fields depend on the role (e.g., `internalNotes` is ADMIN-only)
+- ✔ **Reproducible seeds** (2 USERS, 2 MODS, 1 ADMIN, 5 tickets)
+- ✔ **Automatic Swagger documentation**
+- ✔ **Docker Compose** (API + PostgreSQL)
+- ✔ **Clean, modular, easily extensible codebase**
 
-# production mode
-$ npm run start:prod
-```
+---
 
-## Run tests
+# 🧱 High-Level Architecture
 
-```bash
-# unit tests
-$ npm run test
+The system follows NestJS best practices with self-contained modules.  
+Each module encapsulates its controllers, services, repositories, DTOs, and entities.
 
-# e2e tests
-$ npm run test:e2e
+Conceptually, the backend enforces three authorization layers:
 
-# test coverage
-$ npm run test:cov
-```
+### 1. RBAC (Role-Based Access Control)
+Determines which roles can access each **endpoint** using the custom `@Authed()` decorator  
+and the `RolesGuard`.
 
-## Deployment
+- ADMIN → full access to admin routes and user management.
+- MODERATOR → can read users and see assigned tickets.
+- USER → can create tickets and read only their own.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### 2. Ownership (Resource-Based Authorization)
+Determines whether the user can access an **individual resource**. Examples:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+- A USER only sees tickets where `ownerId = userId`.
+- A MODERATOR only sees tickets where `assignedToId = userId`.
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+This applies to `/tickets/:id` and `/tickets` listings with role-specific filters.
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 3. ABAC-lite (Attribute-Based Access Control)
+Depending on the user **role** (JWT attribute), ticket responses include different fields:
 
-## Resources
+| Role | Visible fields |
+|------|----------------|
+| USER | `title`, `description`, `status` |
+| MODERATOR | + `ownerId`, `assignedToId` |
+| ADMIN | + `internalNotes` (sensitive field) |
 
-Check out a few resources that may come in handy when working with NestJS:
+This showcases dynamic authorization and contextual filtering without excessive complexity.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Core Modules
 
-## Support
+Auth Module  
+├── JWT Authentication  
+└── Sign-in / Sign-up / Me
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+User Module  
+├── List users (ADMIN/MOD)  
+└── Get user by ID
 
-## Stay in touch
+Ticket Module  
+├── Create ticket (USER)  
+├── List tickets (RBAC + ABAC + Ownership)  
+└── Get ticket by ID (Ownership + ABAC)
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Admin Module  
+└── /admin/health (ADMIN only)
 
-## License
+The architecture is built for extensibility with clear separation of concerns and production-friendly practices (DTOs, entities, guards, pipelines, Swagger docs).
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+# 🛠️ Technology Stack
+
+Standard tooling for production-grade NestJS projects:
+
+### Core
+- **NestJS** (modularity, decorators, guards, pipes)
+- **TypeScript**
+
+### Authentication & Authorization
+- **JWT** (Passport JWT Strategy)
+- **Custom RBAC** via decorators
+- **Custom guards** (`AuthGuard`, `RolesGuard`)
+- **ABAC-lite** logic inside `TicketService`
+
+### Database
+- **PostgreSQL**
+- **TypeORM**
+- **QueryRunner** for transactional seeds
+- Per-module custom repositories
+
+### Infrastructure
+- **Docker + Docker Compose**
+- `.env` environment variables
+
+### Misc
+- **Swagger / OpenAPI** for auto-documentation
+- **class-validator** and **class-transformer** for DTO validation
+- **bcrypt/scrypt** for secure credential storage
+
+# 🎯 Features
+
+This project focuses on an MVP-style implementation of the following capabilities:
+
+### 🟢 Authentication
+- Fully functional JWT with `sign-in`, `sign-up`, `me`.
+- User attributes embedded in the token: `userId`, `email`, `role`, `sub`.
+
+### 🟢 Endpoint Authorization (RBAC)
+- `/admin/*` → ADMIN only.
+- `/users` and `/users/:id` → ADMIN + MODERATOR.
+- `/tickets` → USER + MODERATOR + ADMIN.
+- `POST /tickets` → USER only.
+
+### 🟢 Resource Authorization (Ownership)
+- A USER cannot access someone else’s tickets.
+- A MODERATOR can only view tickets assigned to them.
+- ADMIN can view everything.
+
+### 🟢 Attribute Authorization (ABAC-lite)
+The `Ticket` resource changes depending on the role:
+- USER → minimal information
+- MODERATOR → intermediate information
+- ADMIN → full information (including sensitive fields)
+
+### 🟢 Infrastructure
+- Fully dockerized.
+- `make first-run` grants permissions, copies `.env`, builds, and starts the stack.
+- `make up` runs the project at `http://localhost:5001`.
+- Reproducible seeds (`make seed`) create a consistent test environment.
+
+### 🟢 Documentation
+- Swagger available at `http://localhost:5001/api`.
+- Real-world examples in [`docs/examples.md`](./docs/examples.md).

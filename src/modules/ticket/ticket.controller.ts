@@ -6,12 +6,24 @@ import type { UserContext } from '@/common/types/user-context.interface';
 import { Authed } from '@/common/middlewares/decorators/authed.decorator';
 import { CreateTicketInput } from './dtos/create-ticket.input';
 import { TicketDTO } from './dtos/ticket.dto';
-import { ApiOkResponse, ApiParam } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('Tickets')
 @Controller('tickets')
 export class TicketController {
   constructor(private readonly ticketService: TicketService) {}
 
+  @ApiCreatedResponse({
+    description: 'Ticket created by USER',
+    type: TicketDTO,
+  })
+  @ApiForbiddenResponse({ description: 'Only USER role can create tickets' })
   @Authed([RolesCatalog.USER])
   @Post()
   async create(
@@ -38,6 +50,8 @@ export class TicketController {
   @ApiOkResponse({
     description:
       'List of tickets for the current user, filtered and shaped based on role (ABAC-lite)',
+    type: TicketDTO,
+    isArray: true,
   })
   @Authed([RolesCatalog.USER, RolesCatalog.MODERATOR, RolesCatalog.ADMIN])
   @Get()

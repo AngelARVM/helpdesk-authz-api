@@ -4,6 +4,7 @@ import {
   ApiBody,
   ApiOkResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Authed } from '@/common/middlewares/decorators/authed.decorator';
 import { CurrentUser } from '@/common/middlewares/decorators/currnt-user.decorator';
@@ -65,6 +66,7 @@ export class AuthController {
       },
     },
   })
+  @ApiUnauthorizedResponse({ description: 'Invalid credentials' })
   @ApiOkResponse({
     type: SingInResponseDTO,
     description: 'Access token',

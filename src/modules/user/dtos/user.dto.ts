@@ -12,7 +12,7 @@ export class UserDTO implements IUser {
   @IsEmail()
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: RolesCatalog })
   @IsEnum(RolesCatalog)
   role: RolesCatalog;
 
